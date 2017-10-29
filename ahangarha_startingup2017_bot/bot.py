@@ -4,7 +4,7 @@
 # Licence: GPLv3
 # Description: This is homework for StartingUp2017 course
 
-from telegram.ext import Updater, CommandHandler, Filters
+from telegram.ext import Updater, CommandHandler, RegexHandler
 import logging 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
@@ -52,18 +52,77 @@ def gallery(bot,update):
     for i in galleryItams:
         photo_id = i['id']
         title = i['title']
+        url = i['url']
         filename = 'photos/'+ i['filename']
         
-        command = 'buy: /buy_{}'.format(photo_id)
+        command = 'Detail: /info_{} | Buy: /buy_{}'.format(photo_id, photo_id)
         
-        logging.info('Uploading {}'.format(filename))
-        
-        with open(filename, "rb") as file:
-            bot.send_photo(chat_id=update.message.chat_id, 
-                           photo=file,
-                           caption=title+' | '+command)
+        if url is None:
+            #If there is no URL, upload the photo
+            logging.info('Uploading {}'.format(filename))
+            with open(filename, "rb") as file:
+                photo=file
+        else:
+            logging.info('Sending {} from url'.format(filename))
+            photo=url
+            
+        bot.send_photo(chat_id=update.message.chat_id, 
+                       photo=photo,
+                       caption=title+' | '+command)
 
+def buy(bot, update, **args):
+    item_id=args['groups'][0]
+    text = 'Buying the photo with id={} will be managed here...'.format(item_id)
+    bot.send_message(chat_id=update.message.chat_id, 
+                     text=text, 
+                     parse_mode='Markdown')
+
+def info(bot, update, **args):
+    item_id=args['groups'][0]
     
+    import db
+    galleryItam = db.getGalleryItem(item_id)
+    
+    if galleryItam == None:
+        logging.info('No item found in database with id={}'.format(item_id))
+        text = "No Item found (or wrong item id was sent)"
+    else:
+        photo_id    = galleryItam['id']
+        title       = galleryItam['title']
+        url         = galleryItam['url']
+        filename    = 'photos/'+ galleryItam['filename']
+        
+        if url is None:
+            #If there is no URL, upload the photo
+            logging.info('Uploading {}'.format(filename))
+            with open(filename, "rb") as file:
+                photo=file
+        else:
+            logging.info('Sending {} from url'.format(filename))
+            photo=url
+        
+        
+        # The following information is for presentation. Later, all of them
+        # must 
+        text        = """ *Title:* {}  
+*By:* Mostafa Ahangarha
+
+*Size:* 100x70 cm  
+*On:* Sep 15, 2017
+
+*Price:* $ 30
+
+*Buy:* /buy\_{}""".format(title, photo_id)
+    
+        bot.send_photo(chat_id=update.message.chat_id, 
+                           photo=photo)
+        
+        bot.send_message(chat_id=update.message.chat_id, 
+                         text=text, 
+                         parse_mode='Markdown')
+
+# ///////////////////////////////////////////////
+
 updater = Updater(getToken())
 dispatcher = updater.dispatcher
 
@@ -71,6 +130,10 @@ dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('about', about))
 dispatcher.add_handler(CommandHandler('gallery', gallery))
 
+# detect /buy_123 links
+dispatcher.add_handler(RegexHandler(r'^/buy_(\d+)', buy, pass_groups=True))
+# detect /info_123 links
+dispatcher.add_handler(RegexHandler(r'^/info_(\d+)', info, pass_groups=True))
 
 updater.start_polling()
 
