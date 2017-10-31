@@ -4,11 +4,18 @@
 # Licence: GPLv3
 # Description: This is homework for StartingUp2017 course
 
-from telegram.ext import Updater, CommandHandler, RegexHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
+from telegram import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+
 import logging 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
                     level=logging.INFO)
+
+main_keyboard = ReplyKeyboardMarkup([
+            [KeyboardButton(text='Gallery'),KeyboardButton(text='About')],
+            ], resize_keyboard = False)
+
 # Reading token from external file
 def getToken(): 
     import os
@@ -22,6 +29,7 @@ def getToken():
 
 
 def start(bot, update):
+    global main_keyboard
     text = """
 *Welcome to the Photo Store Bot.*
 
@@ -29,7 +37,8 @@ You can see the /gallery or know more /about this bot.
 """
     bot.send_message(chat_id=update.message.chat_id, 
                      text=text, 
-                     parse_mode='Markdown')
+                     parse_mode='Markdown',
+                     reply_markup = main_keyboard)
 
 def about(bot,update):
     text = """
@@ -37,10 +46,11 @@ def about(bot,update):
 
 The aim of this bot is to proide a simple solution for selling photos withing telegram.
 
-You can see (by now) sample photos to be sold in /gallery.
+You can see (by now) sample photos to be sold in *gallery*.
 
 This bot is (being) made by Mostafa Ahangarha as the project for [StartingUp2017](https://github.com/Startingup2017python2/telegramShop) course.
     """
+
     bot.send_message(chat_id=update.message.chat_id, 
                      text=text, 
                      parse_mode='Markdown')
@@ -55,8 +65,6 @@ def gallery(bot,update):
         url = i['url']
         filename = 'photos/'+ i['filename']
         
-        command = 'Detail: /info_{} | Buy: /buy_{}'.format(photo_id, photo_id)
-        
         if url is None:
             #If there is no URL, upload the photo
             logging.info('Uploading {}'.format(filename))
@@ -65,23 +73,38 @@ def gallery(bot,update):
         else:
             logging.info('Sending {} from url'.format(filename))
             photo=url
-            
+        
         bot.send_photo(chat_id=update.message.chat_id, 
-                       photo=photo,
-                       caption=title+' | '+command)
+                       photo=photo)
+        
+        keyboard=InlineKeyboardMarkup([[(InlineKeyboardButton(text='More...', callback_data="info_{}".format(photo_id)))]])
+        
+        bot.send_message(chat_id=update.message.chat_id, 
+                         text=title, 
+                         parse_mode='Markdown',
+                         reply_markup=keyboard)
 
-def buy(bot, update, **args):
-    item_id=args['groups'][0]
-    text = 'Buying the photo with id={} will be managed here...'.format(item_id)
-    bot.send_message(chat_id=update.message.chat_id, 
-                     text=text, 
-                     parse_mode='Markdown')
-
-def info(bot, update, **args):
-    item_id=args['groups'][0]
+def buy(bot, update):
+    query = update.callback_query
+    data = query['data'] # Format: job_id
+    
+    item_id = data.split('_')[1]
+    
+    text = 'Buying the photo with id={} will be managed here. But not now !'.format(item_id)
+    bot.edit_message_text(chat_id=query.message.chat_id,
+                 text=text,
+                 parse_mode='Markdown',
+                 message_id=query.message.message_id)
+def info(bot, update):
+    query = update.callback_query
+    data = query['data'] # Format: job_id
+    
+    item_id = data.split('_')[1]
     
     import db
     galleryItam = db.getGalleryItem(item_id)
+    
+    keyboardBtn = []
     
     if galleryItam == None:
         logging.info('No item found in database with id={}'.format(item_id))
@@ -89,37 +112,44 @@ def info(bot, update, **args):
     else:
         photo_id    = galleryItam['id']
         title       = galleryItam['title']
-        url         = galleryItam['url']
-        filename    = 'photos/'+ galleryItam['filename']
-        
-        if url is None:
-            #If there is no URL, upload the photo
-            logging.info('Uploading {}'.format(filename))
-            with open(filename, "rb") as file:
-                photo=file
-        else:
-            logging.info('Sending {} from url'.format(filename))
-            photo=url
-        
         
         # The following information is for presentation. Later, all of them
         # must 
-        text        = """ *Title:* {}  
-*By:* Mostafa Ahangarha
+        text        = """*{}*  
+_By: Mostafa Ahangarha_
 
 *Size:* 100x70 cm  
 *On:* Sep 15, 2017
 
-*Price:* $ 30
-
-*Buy:* /buy\_{}""".format(title, photo_id)
+*Price:* $ 30""".format(title)
+        keyboardBtn.append([(InlineKeyboardButton(text='Buy', callback_data="buy_{}".format(photo_id)))])
     
-        bot.send_photo(chat_id=update.message.chat_id, 
-                           photo=photo)
-        
-        bot.send_message(chat_id=update.message.chat_id, 
-                         text=text, 
-                         parse_mode='Markdown')
+    keyboard=InlineKeyboardMarkup(keyboardBtn)    
+
+    bot.edit_message_text(chat_id=query.message.chat_id,
+                 text=text,
+                 parse_mode='Markdown',
+                 message_id=query.message.message_id,
+                 reply_markup=keyboard)
+
+
+def msgRedirect(bot,update):
+    if update.message.text == 'About':
+        about(bot, update)
+    elif update.message.text == 'Gallery':
+        gallery(bot, update)
+
+
+def callbackQueryManager(bot,update):
+    query = update.callback_query
+    data = query['data'] # Format: job_id
+    
+    job = data.split('_')[0]
+    if job == 'info':
+        info(bot, update)
+    elif job == 'buy':
+        buy(bot, update)
+
 
 # ///////////////////////////////////////////////
 
@@ -130,14 +160,11 @@ dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('about', about))
 dispatcher.add_handler(CommandHandler('gallery', gallery))
 
-# detect /buy_123 links
-dispatcher.add_handler(RegexHandler(r'^/buy_(\d+)', buy, pass_groups=True))
-# detect /info_123 links
-dispatcher.add_handler(RegexHandler(r'^/info_(\d+)', info, pass_groups=True))
+updater.dispatcher.add_handler(CallbackQueryHandler(callbackQueryManager))
 
+dispatcher.add_handler(MessageHandler(Filters.text, msgRedirect))
 updater.start_polling()
 
 print("The bot is running...")
 
 updater.idle()
-
