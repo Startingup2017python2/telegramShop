@@ -7,14 +7,17 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
-import logging 
+import logging
+
+import userManagement as users
+import orderManagement as orders
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
                     level=logging.INFO)
 
 main_keyboard = ReplyKeyboardMarkup([
             [KeyboardButton(text='Gallery'),KeyboardButton(text='About')],
-            ], resize_keyboard = False)
+            ], resize_keyboard = True)
 
 # Reading token from external file
 def getToken(): 
@@ -30,10 +33,13 @@ def getToken():
 
 def start(bot, update):
     global main_keyboard
+    
+    # register user id
+    users.registerUser(update.message.chat_id) # Chat_id is the user's unique id
+    
     text = """
-*Welcome to the Photo Store Bot.*
-
-You can see the /gallery or know more /about this bot.
+*Welcome to the Photo Store Bot.*  
+You can see the *gallery* or know more *about* this bot.
 """
     bot.send_message(chat_id=update.message.chat_id, 
                      text=text, 
@@ -90,7 +96,10 @@ def buy(bot, update):
     
     item_id = data.split('_')[1]
     
-    text = 'Buying the photo with id={} will be managed here. But not now !'.format(item_id)
+    orders.registerOrder(query.message.chat_id, item_id)
+    logging.info("New order registered: User {}({}) ordered {}".format(query.message.chat_id, query.message.chat['username'], item_id))
+
+    text = 'You order for the photo with id={} is registered successfully. But still we cannot ship it!'.format(item_id)
     bot.edit_message_text(chat_id=query.message.chat_id,
                  text=text,
                  parse_mode='Markdown',
