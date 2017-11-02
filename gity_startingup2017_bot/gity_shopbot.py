@@ -11,7 +11,7 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters,
 ####################################################################################################################
 #initialize  parameters
 
-updater = Updater('465765170:AAGx1PPex1-kYZ3DJ_REZMk_oh-1EWSwSMo')
+updater = Updater('Token')
 
 ######################################################################################################################
 #data
