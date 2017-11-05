@@ -13,3 +13,12 @@ __logo:__ ![Ahangarha StartingUp2017 bot logo](ahangarha_bot_logo.png "Ahangarha
 __Bot address:__ http://t.me/ahangarha_startingup2017_bot
 
 __Description:__ A bot for selling Photos
+
+
+
+### gitys bot
+
+
+__Bot address:__ http://t.me/gity0bot
+
+__Description:__ A bot for selling perfume products
