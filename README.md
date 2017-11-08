@@ -4,6 +4,8 @@ The objective in the 3rd week is to make a Telegram Bot which can show catalog o
 
 It is up to the developer to choose the products.
 
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/Startingup2017python2/telegramShop.svg?columns=all)](https://waffle.io/Startingup2017python2/telegramShop)
+
 ## Bots to be made:
 
 ### Ahangarha Startingup2017
