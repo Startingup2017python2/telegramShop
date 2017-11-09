@@ -6,19 +6,17 @@
 # This file consists of methods dealing with orders
 
 import redis
-r = redis.StrictRedis() # Connect with default setting (localhost:3679)
+r = redis.StrictRedis()  # Connect with default setting (localhost:3679)
+
 
 def registerOrder(user_id, product_id):
-    # TODO: 
+    # TODO:
     # Validate user_id and product_id
-    
+
     # Now let's assume they are provided properly
-    
-#    r.incr('lastOrderId') # making unique order id
-#    print(r.get('lastOrderId'))
-    
+
     key = 'o:{}'.format(user_id)
-    
+
     if r.exists(key):
         r.append(key, ',{}'.format(product_id))
     else:
