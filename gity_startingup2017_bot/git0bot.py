@@ -459,7 +459,7 @@ def redis_register_user(bot, update):
     keyboard_main = ReplyKeyboardMarkup([
         [KeyboardButton(text='درباره ما'),
          KeyboardButton(text='لیست محصولات')]],
-                                        resize_keyboard=True)
+        resize_keyboard=True)
     bot.sendMessage(update.message.chat_id,
                     text="سلام {} . به فروشگاه ما خوش آمدید."
                          " شما می توانید از دکمه لیست محصولات "
