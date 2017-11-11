@@ -171,11 +171,12 @@ _By: {}_
 *Size:* {} cm
 
 *Price:* {} IRR""".format(
-                 galleryItam['title'],
-                 galleryItam['by'],
-                 galleryItam['size'],
-                 galleryItam['price'],
+                galleryItam['title'],
+                galleryItam['by'],
+                galleryItam['size'],
+                galleryItam['price'],
             )
+
         keyboardBtn.append(
             [
                 (
