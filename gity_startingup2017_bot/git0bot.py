@@ -3,14 +3,19 @@
 
 from telegram import ReplyKeyboardMarkup, KeyboardButton, ParseMode
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters, MessageHandler
+from telegram.ext import Updater, CommandHandler,\
+    CallbackQueryHandler, Filters, MessageHandler
 import logging
 import redis
 
 # initialize  parameters
 
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s ', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s -'
+                           ' %(name)s -'
+                           ' %(levelname)s -'
+                           ' %(message)s ',
+                    level=logging.INFO)
 server_r = redis.Redis()
 
 # data
@@ -22,21 +27,24 @@ product_women = [
         "name": "lamour",
         "cost": "از دویست هزار تومان تا چهار صد و پنجاه هزار تومان",
         "description": "ادکلن زنانه",
-        "url": "http://cologneforwomen.parsiablog.com/wp-content/uploads/sites/68/2013/11/lamour-4.jpg"
+        "url": "http://cologneforwomen.parsiablog.com"
+               "/wp-content/uploads/sites/68/2013/11/lamour-4.jpg"
     },
     {
         "id": "2",
         "name": "ricci-ricci",
         "cost": "پانصد هزار تومان",
         "description": "ادکلن زنانه",
-        "url": "http://novinwatch.com/wp-content/uploads/2014/01/odkolon-ricci-ricci-2.jpg"
+        "url": "http://novinwatch.com/wp-content"
+               "/uploads/2014/01/odkolon-ricci-ricci-2.jpg"
     },
     {
         "id": "3",
         "name": "flowr",
         "cost": "از دویست هزار تومان تا چهار صد و پنجاه هزار تومان",
         "description": "ادکلن زنانه",
-        "url": "http://gemperfume.com/wp-content/uploads/2014/09/HFE-1.jpg"
+        "url": "http://gemperfume.com"
+               "/wp-content/uploads/2014/09/HFE-1.jpg"
 
     },
     {
@@ -44,7 +52,8 @@ product_women = [
         "name": "versace",
         "cost": "پانصد هزار تومان",
         "description": "ادکلن زنانه",
-        "url": "http://www.samatak.com/image/2016/09/2/1033807340-samatak-com.jpg"
+        "url": "http://www.samatak.com/"
+               "image/2016/09/2/1033807340-samatak-com.jpg"
 
     }
 
@@ -57,7 +66,8 @@ product_men = [
         "name": "sofine",
         "cost": "از دویست هزار تومان تا چهار صد و پنجاه هزار تومان",
         "description": "ادکلن مردانه",
-        "url": "http://blog.sofine.ir/wp-content/uploads/2015/01/05017a1.jpg"
+        "url": "http://blog.sofine.ir/wp"
+               "-content/uploads/2015/01/05017a1.jpg"
     },
     {
         "id": "2",
@@ -71,14 +81,16 @@ product_men = [
         "name": "picofile",
         "cost": "از دویست هزار تومان تا چهار صد و پنجاه هزار تومان",
         "description": "ادکلن مردانه",
-        "url": "http://s3.picofile.com/file/8196262850/product_detailed_image_28700_41287.jpg"
+        "url": "http://s3.picofile.com/file/"
+               "8196262850/product_detailed_image_28700_41287.jpg"
     },
     {
         "id": "4",
         "name": "bolgano",
         "cost": "پانصد هزار تومان",
         "description": "ادکلن مردانه",
-        "url": "http://blog.sofine.ir/wp-content/uploads/2015/01/05017a1.jpg"
+        "url": "http://blog.sofine.ir/wp-content"
+               "/uploads/2015/01/05017a1.jpg"
     }
 
 ]
@@ -90,15 +102,18 @@ product_c = [
         "name": "Amouage",
         "cost": "از دویست هزار تومان تا چهار صد و پنجاه هزار تومان",
         "description": "ادکلن مشترک",
-        "url": "http://blog.sofine.ir/wp-content/uploads/2015/01/05017a1.jpg"
+        "url": "http://blog.sofine.ir/wp-content"
+               "/uploads/2015/01/05017a1.jpg"
     },
     {
         "id": "2",
         "name": "persianfume",
         "cost": "پانصد هزار تومان",
         "description": "ادکلن مشترک",
-        "url": "http://persianfume.ir/wp-content/uploads/2016/06/%D8%A7%D8%AF%DA%A9%D9%84%"
-               "D9%86-%D8%A7%DA%AF%D9%86%D8%B1-%D9%86%D8%A7%D9%85%D8%A8%D8%B1-%D9%88%D8%A7%"
+        "url": "http://persianfume.ir/wp-content"
+               "/uploads/2016/06/%D8%A7%D8%AF%DA%A9%D9%84%"
+               "D9%86-%D8%A7%DA%AF%D9%86%D8%B1"
+               "-%D9%86%D8%A7%D9%85%D8%A8%D8%B1-%D9%88%D8%A7%"
                "D9%86-%D8%B9%D9%88%D8%AF-500x500.jpg"
     },
     {
@@ -106,7 +121,8 @@ product_c = [
         "name": "ambre",
         "cost": "از دویست هزار تومان تا چهار صد و پنجاه هزار تومان",
         "description": "ادکلن مشترک",
-        "url": "https://www.zanbil.ir/image/9958?name=ambre-nue-fw.jpg&wh=400x400"
+        "url": "https://www.zanbil.ir/image/9958?"
+               "name=ambre-nue-fw.jpg&wh=400x400"
     },
     {
         "id": "4",
@@ -142,12 +158,16 @@ def main_menu(bot, update):
     keyboard_main = ReplyKeyboardMarkup(menu, resize_keyboard=True)
     message = update.message.text
     if message == 'درباره ما':
-        bot.sendMessage(update.message.chat_id, 'فروش انوع ادکلن های مردانه و زنانه و مشترک با قیمت مناسب',
+        bot.sendMessage(update.message.chat_id,
+                        'فروش انوع ادکلن های مردانه و '
+                        'زنانه و مشترک با قیمت مناسب',
                         reply_markup=keyboard_main)
     elif message == 'لیست محصولات':
         product_menu(update)
     else:
-        bot.sendMessage(update.message.chat_id, text='لطفا گروه محصول را انتخاب کنید:', reply_markup=keyboard_main)
+        bot.sendMessage(update.message.chat_id,
+                        text='لطفا گروه محصول را انتخاب کنید:',
+                        reply_markup=keyboard_main)
 
 # product menu
 
@@ -157,7 +177,8 @@ def product_menu(update):
                                       callback_data='g_1'),
                  InlineKeyboardButton(u'\U0001F468' + 'ادکلن های مردانه',
                                       callback_data='g_2'),
-                 InlineKeyboardButton("ادکلن های مشترک", callback_data='g_3')],
+                 InlineKeyboardButton("ادکلن های مشترک",
+                                      callback_data='g_3')],
 
                 ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -181,24 +202,32 @@ def inlinekeyboard_b(bot, update):
         if indp == 1:
             text = 'از ادکلن های زنانه زیر انتخاب کنید:'
             buttons = [InlineKeyboardButton(text=x["name"],
-                                            callback_data="prw_" + str(ind)) for ind, x in enumerate(product_women)]
+                                            callback_data="prw_" +
+                                                          str(ind)) for ind, x in
+                       enumerate(product_women)]
             keyboard = InlineKeyboardMarkup([
                 buttons[0:2],
                 buttons[2:4],
 
-                [InlineKeyboardButton(text=u'\U000025C0'+'برگشت', callback_data="menu_1")]
+                [InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
+                                      callback_data="menu_1")]
             ])
 
-            bot.editMessageText(chat_id=user_id, message_id=msg_id, text=text, reply_markup=keyboard)
+            bot.editMessageText(chat_id=user_id,
+                                message_id=msg_id,
+                                text=text,
+                                reply_markup=keyboard)
 
         elif indp == 2:
             text = 'از ادکلن های مردانه زیر انتخاب کنید:'
             buttons = [InlineKeyboardButton(text=x["name"],
-                                            callback_data="prm_" + str(ind)) for ind, x in enumerate(product_men)]
+                                            callback_data="prm_" +
+                                                          str(ind)) for ind, x in
+                       enumerate(product_men)]
             keyboard = InlineKeyboardMarkup([
                 buttons[0:2],
                 buttons[2:4],
-                [InlineKeyboardButton(text=u'\U000025C0'+'برگشت',
+                [InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
                                       callback_data="menu_1")]
             ])
             bot.editMessageText(chat_id=user_id,
@@ -208,11 +237,14 @@ def inlinekeyboard_b(bot, update):
         elif indp == 3:
             text = 'از ادکلن های مشترک زیر انتخاب کنید:'
             buttons = [InlineKeyboardButton(text=x["name"],
-                                            callback_data="prc_" + str(ind)) for ind, x in enumerate(product_c)]
+                                            callback_data="prc_" +
+                                                          str(ind)) for ind, x in
+                       enumerate(product_c)]
             keyboard = InlineKeyboardMarkup([
                 buttons[0:2],
                 buttons[2:4],
-                [InlineKeyboardButton(text=u'\U000025C0'+'برگشت', callback_data="menu_1")]
+                [InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
+                                      callback_data="menu_1")]
             ])
             bot.editMessageText(chat_id=user_id,
                                 message_id=msg_id,
@@ -224,9 +256,13 @@ def inlinekeyboard_b(bot, update):
         pro_description = pro["description"]
         pro_cost = pro["cost"]
         pro_url = pro["url"]
-        keyboard = InlineKeyboardMarkup([[(InlineKeyboardButton(text=u'\U000025C0' + 'برگشت', callback_data="menu_2")),
-                                          (InlineKeyboardButton(text='افزودن به لیست خردید' + u'\U00002714',
-                                                                callback_data="buy_w_" + str(indp)))]])
+        keyboard = InlineKeyboardMarkup([[(InlineKeyboardButton(text=u'\U000025C0' +
+                                                                     'برگشت',
+                                                                callback_data="menu_2")),
+                                          (InlineKeyboardButton(text='افزودن به لیست خردید' +
+                                                                     u'\U00002714',
+                                                                callback_data="buy_w_" +
+                                                                              str(indp)))]])
         bot.editMessageText(chat_id=user_id, message_id=msg_id,
                             text='<b>نام محصول:</b>' +
                                  pro_name + '\n' + 'توضیحات:' +
@@ -240,10 +276,14 @@ def inlinekeyboard_b(bot, update):
         pro_description = pro["description"]
         pro_cost = pro["cost"]
         pro_url = pro["url"]
-        keyboard = InlineKeyboardMarkup([[(InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
+        keyboard = InlineKeyboardMarkup([[(InlineKeyboardButton(text=u'\U000025C0' +
+                                                                     'برگشت',
                                                                 callback_data="menu_3")),
-                                          (InlineKeyboardButton(text='افزودن به لیست خردید' + u'\U00002714',
-                                                                callback_data="buy_m_" + str(indp)))]])
+                                          (InlineKeyboardButton(text='افزودن به '
+                                                                     'لیست خردید' +
+                                                                     u'\U00002714',
+                                                                callback_data="buy_m_" +
+                                                                              str(indp)))]])
         bot.editMessageText(chat_id=user_id,
                             message_id=msg_id,
                             text='<b>نام محصول:</b>' +
@@ -259,10 +299,16 @@ def inlinekeyboard_b(bot, update):
         pro_description = pro["description"]
         pro_cost = pro["cost"]
         pro_url = pro["url"]
-        keyboard = InlineKeyboardMarkup([[(InlineKeyboardButton(text=u'\U000025C0' + 'برگشت', callback_data="menu_4")),
-                                          (InlineKeyboardButton(text='افزودن به لیست خردید' + u'\U00002714',
-                                                                callback_data="buy_c_" + str(indp)))]])
-        bot.editMessageText(chat_id=user_id, message_id=msg_id,
+        keyboard = InlineKeyboardMarkup([[(InlineKeyboardButton(text=u'\U000025C0' +
+                                                                     'برگشت',
+                                                                callback_data="menu_4")),
+                                          (InlineKeyboardButton(text='افزودن به '
+                                                                     'لیست خردید' +
+                                                                     u'\U00002714',
+                                                                callback_data="buy_c_" +
+                                                                              str(indp)))]])
+        bot.editMessageText(chat_id=user_id,
+                            message_id=msg_id,
                             text='<b>نام محصول:</b>' +
                                  pro_name + '\n' + 'توضیحات:' +
                                  pro_description + '\n' + 'قیمت :' +
@@ -277,11 +323,14 @@ def inlinekeyboard_b(bot, update):
             pro_url = pro["url"]
             redis_buy_pro(type_product, ind_buy, chat_id)
             keyboard = InlineKeyboardMarkup(
-                [[(InlineKeyboardButton(text=u'\U000025C0' + 'برگشت', callback_data="menu_4"))]])
+                [[(InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
+                                        callback_data="menu_4"))]])
             bot.editMessageText(chat_id=user_id, message_id=msg_id,
                                 text=' محصول ' + pro[
-                                    'name'] + 'به سبد خرید شما اضافه شد.' + '<a href="' + pro_url + '"> &#160;</a>',
-                                parse_mode=ParseMode.HTML, reply_markup=keyboard)
+                                    'name'] + 'به سبد خرید شما اضافه شد.' + '<a href='
+                                                                            '"' + pro_url + '"> &#160;</a>',
+                                parse_mode=ParseMode.HTML,
+                                reply_markup=keyboard)
         if type_product == 'm':
             pro = product_men[ind_buy]
             pro_url = pro["url"]
@@ -291,50 +340,70 @@ def inlinekeyboard_b(bot, update):
                                         callback_data="menu_3"))]])
             bot.editMessageText(chat_id=user_id, message_id=msg_id,
                                 text=' محصول ' + pro[
-                                    'name'] + 'به سبد خرید شما اضافه شد.' + '<a href="' + pro_url + '"> &#160;</a>',
-                                parse_mode=ParseMode.HTML, reply_markup=keyboard)
+                                    'name'] + 'به سبد خرید شما اضافه شد.' + '<a href='
+                                                                            '"' + pro_url + '"> &#160;</a>',
+                                parse_mode=ParseMode.HTML,
+                                reply_markup=keyboard)
         if type_product == 'w':
             pro = product_women[ind_buy]
             pro_url = pro["url"]
             redis_buy_pro(type_product, ind_buy, chat_id)
             keyboard = InlineKeyboardMarkup(
-                [[(InlineKeyboardButton(text=u'\U000025C0' + 'برگشت', callback_data="menu_2"))]])
+                [[(InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
+                                        callback_data="menu_2"))]])
 
             bot.editMessageText(chat_id=user_id, message_id=msg_id,
                                 text=' محصول ' +
-                                     pro['name'] + 'به سبد خرید شما اضافه شد.' + '<a href="' +
+                                     pro['name'] + 'به سبد خرید شما '
+                                                   'اضافه شد.' +
+                                     '<a href="' +
                                      pro_url + '"> &#160;</a>',
-                                parse_mode=ParseMode.HTML, reply_markup=keyboard)
+                                parse_mode=ParseMode.HTML,
+                                reply_markup=keyboard)
     if query.data == 'menu_2':
         text = 'از ادکلن های زنانه زیر انتخاب کنید: '
         buttons = [InlineKeyboardButton(text=x["name"],
-                                        callback_data="prw_" + str(ind)) for ind, x in enumerate(product_women)]
+                                        callback_data="prw_" +
+                                                      str(ind)) for ind, x in
+                   enumerate(product_women)]
         keyboard = InlineKeyboardMarkup([
             buttons[0:2],
             buttons[2:4],
-            [InlineKeyboardButton(text=u'\U000025C0'+'برگشت', callback_data="menu_1")]
+            [InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
+                                  callback_data="menu_1")]
         ])
-        bot.editMessageText(chat_id=user_id, message_id=msg_id, text=text, reply_markup=keyboard)
+        bot.editMessageText(chat_id=user_id,
+                            message_id=msg_id,
+                            text=text,
+                            reply_markup=keyboard)
     if query.data == 'menu_3':
         text = 'از ادکلن های مردانه زیر انتخاب کنید: '
         buttons = [InlineKeyboardButton(text=x["name"],
-                                        callback_data="prm_" + str(ind)) for ind, x in enumerate(product_men)]
+                                        callback_data="prm_" +
+                                                      str(ind)) for ind, x in
+                   enumerate(product_men)]
         keyboard = InlineKeyboardMarkup([
             buttons[0:2],
             buttons[2:4],
-            [InlineKeyboardButton(text=u'\U000025C0'+'برگشت', callback_data="menu_1")]
+            [InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
+                                  callback_data="menu_1")]
         ])
-        bot.editMessageText(chat_id=user_id, message_id=msg_id, text=text, reply_markup=keyboard)
+        bot.editMessageText(chat_id=user_id,
+                            message_id=msg_id,
+                            text=text,
+                            reply_markup=keyboard)
 
     if query.data == 'menu_4':
         text = 'از ادکلن های مشترک زیر انتخاب کنید: '
         buttons = [InlineKeyboardButton(text=x["name"],
-                                        callback_data="prc_" + str(ind)) for ind, x in enumerate(product_c)]
+                                        callback_data="prc_" +
+                                                      str(ind)) for ind, x in
+                   enumerate(product_c)]
         keyboard = InlineKeyboardMarkup([
             buttons[0:2],
             buttons[2:4],
 
-            [InlineKeyboardButton(text=u'\U000025C0'+'برگشت',
+            [InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
                                   callback_data="menu_1")]
         ])
         bot.editMessageText(chat_id=user_id,
@@ -363,10 +432,13 @@ def inlinekeyboard_b(bot, update):
 
 def redis_buy_pro(type_product, ind_buy, chat_id):
     chat_id = str(chat_id)
-    key = 'order:'+chat_id
+    key = 'order:' + chat_id
     pro = type_product + '|' + str(ind_buy)
     server_r.rpush(key, pro)
-    logging.info('ordered ' + type_product + ' ,' + str(ind_buy) + ' by user ' + chat_id)
+    logging.info('ordered ' +
+                 type_product + ' ,' +
+                 str(ind_buy) + ' by user ' +
+                 chat_id)
 
 
 def redis_register_user(bot, update):
@@ -374,11 +446,13 @@ def redis_register_user(bot, update):
     key = 'user'
     server_r.set(key, update.message.chat_id)
     logging.info('registered user with ID= ' + chat_id)
-    keyboard_main = ReplyKeyboardMarkup([[KeyboardButton(text='درباره ما'), KeyboardButton(text='لیست محصولات')]],
+    keyboard_main = ReplyKeyboardMarkup([[KeyboardButton(text='درباره ما'),
+                                          KeyboardButton(text='لیست محصولات')]],
                                         resize_keyboard=True)
     bot.sendMessage(update.message.chat_id,
                     text="سلام {} . به فروشگاه ما خوش آمدید."
-                         " شما می توانید از دکمه لیست محصولات به لیست ادکلن های این فروشگاه دسترسی یابید. "
+                         " شما می توانید از دکمه لیست محصولات "
+                         "به لیست ادکلن های این فروشگاه دسترسی یابید. "
                     .format(update.message.chat.first_name),
                     reply_markup=keyboard_main)
 # add handlers
