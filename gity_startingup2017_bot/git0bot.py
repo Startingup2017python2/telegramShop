@@ -203,7 +203,8 @@ def inlinekeyboard_b(bot, update):
             text = 'از ادکلن های زنانه زیر انتخاب کنید:'
             buttons = [InlineKeyboardButton(text=x["name"],
                                             callback_data="prw_" +
-                                                          str(ind)) for ind, x in
+                                                          str(ind))
+                       for ind, x in
                        enumerate(product_women)]
             keyboard = InlineKeyboardMarkup([
                 buttons[0:2],
@@ -222,7 +223,8 @@ def inlinekeyboard_b(bot, update):
             text = 'از ادکلن های مردانه زیر انتخاب کنید:'
             buttons = [InlineKeyboardButton(text=x["name"],
                                             callback_data="prm_" +
-                                                          str(ind)) for ind, x in
+                                                          str(ind))
+                       for ind, x in
                        enumerate(product_men)]
             keyboard = InlineKeyboardMarkup([
                 buttons[0:2],
@@ -238,7 +240,8 @@ def inlinekeyboard_b(bot, update):
             text = 'از ادکلن های مشترک زیر انتخاب کنید:'
             buttons = [InlineKeyboardButton(text=x["name"],
                                             callback_data="prc_" +
-                                                          str(ind)) for ind, x in
+                                                          str(ind))
+                       for ind, x in
                        enumerate(product_c)]
             keyboard = InlineKeyboardMarkup([
                 buttons[0:2],
@@ -256,14 +259,17 @@ def inlinekeyboard_b(bot, update):
         pro_description = pro["description"]
         pro_cost = pro["cost"]
         pro_url = pro["url"]
-        keyboard = InlineKeyboardMarkup([[(InlineKeyboardButton(text=u'\U000025C0' +
-                                                                     'برگشت',
-                                                                callback_data="menu_2")),
-                                          (InlineKeyboardButton(text='افزودن به لیست خردید' +
-                                                                     u'\U00002714',
-                                                                callback_data="buy_w_" +
-                                                                              str(indp)))]])
-        bot.editMessageText(chat_id=user_id, message_id=msg_id,
+        buttons = (InlineKeyboardButton(text=u'\U000025C0' +
+                                             'برگشت',
+                                        callback_data="menu_2")),\
+                  (InlineKeyboardButton(text='افزودن به لیست خردید' +
+                                             u'\U00002714',
+                                        callback_data="buy_w_" +
+                                                      str(indp)))
+
+        keyboard = InlineKeyboardMarkup([[buttons]])
+        bot.editMessageText(chat_id=user_id,
+                            message_id=msg_id,
                             text='<b>نام محصول:</b>' +
                                  pro_name + '\n' + 'توضیحات:' +
                                  pro_description + '\n' + 'قیمت :' +
@@ -276,14 +282,14 @@ def inlinekeyboard_b(bot, update):
         pro_description = pro["description"]
         pro_cost = pro["cost"]
         pro_url = pro["url"]
-        keyboard = InlineKeyboardMarkup([[(InlineKeyboardButton(text=u'\U000025C0' +
-                                                                     'برگشت',
-                                                                callback_data="menu_3")),
-                                          (InlineKeyboardButton(text='افزودن به '
-                                                                     'لیست خردید' +
-                                                                     u'\U00002714',
-                                                                callback_data="buy_m_" +
-                                                                              str(indp)))]])
+        buttons = (InlineKeyboardButton(text=u'\U000025C0' +
+                                             'برگشت',
+                                        callback_data="menu_3")), \
+                  (InlineKeyboardButton(text='افزودن به لیست خردید' +
+                                             u'\U00002714',
+                                        callback_data="buy_m_" +
+                                                      str(indp)))
+        keyboard = InlineKeyboardMarkup([[buttons]])
         bot.editMessageText(chat_id=user_id,
                             message_id=msg_id,
                             text='<b>نام محصول:</b>' +
@@ -299,14 +305,13 @@ def inlinekeyboard_b(bot, update):
         pro_description = pro["description"]
         pro_cost = pro["cost"]
         pro_url = pro["url"]
-        keyboard = InlineKeyboardMarkup([[(InlineKeyboardButton(text=u'\U000025C0' +
-                                                                     'برگشت',
-                                                                callback_data="menu_4")),
-                                          (InlineKeyboardButton(text='افزودن به '
-                                                                     'لیست خردید' +
-                                                                     u'\U00002714',
-                                                                callback_data="buy_c_" +
-                                                                              str(indp)))]])
+        buttons = (InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
+                                        callback_data="menu_4")),\
+                  (InlineKeyboardButton(text='افزودن به لیست خردید' +
+                                             u'\U00002714',
+                                        callback_data="buy_c_" +
+                                                      str(indp)))
+        keyboard = InlineKeyboardMarkup([[buttons]])
         bot.editMessageText(chat_id=user_id,
                             message_id=msg_id,
                             text='<b>نام محصول:</b>' +
@@ -314,7 +319,8 @@ def inlinekeyboard_b(bot, update):
                                  pro_description + '\n' + 'قیمت :' +
                                  pro_cost + '<a href="' +
                                  pro_url + '"> &#160;</a>.',
-                            parse_mode=ParseMode.HTML, reply_markup=keyboard)
+                            parse_mode=ParseMode.HTML,
+                            reply_markup=keyboard)
     elif typee == 'buy':
         type_product = splited_query[1]
         ind_buy = int(splited_query[2])
@@ -326,9 +332,11 @@ def inlinekeyboard_b(bot, update):
                 [[(InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
                                         callback_data="menu_4"))]])
             bot.editMessageText(chat_id=user_id, message_id=msg_id,
-                                text=' محصول ' + pro[
-                                    'name'] + 'به سبد خرید شما اضافه شد.' + '<a href='
-                                                                            '"' + pro_url + '"> &#160;</a>',
+                                text=' محصول ' +
+                                     pro['name'] +
+                                     'به سبد خرید شما اضافه شد.' +
+                                     '<a href=''"' +
+                                     pro_url + '"> &#160;</a>',
                                 parse_mode=ParseMode.HTML,
                                 reply_markup=keyboard)
         if type_product == 'm':
@@ -339,9 +347,11 @@ def inlinekeyboard_b(bot, update):
                 [[(InlineKeyboardButton(text=u'\U000025C0' + 'برگشت',
                                         callback_data="menu_3"))]])
             bot.editMessageText(chat_id=user_id, message_id=msg_id,
-                                text=' محصول ' + pro[
-                                    'name'] + 'به سبد خرید شما اضافه شد.' + '<a href='
-                                                                            '"' + pro_url + '"> &#160;</a>',
+                                text=' محصول ' +
+                                     pro['name'] +
+                                     'به سبد خرید شما اضافه شد.' +
+                                     '<a href=''"' + pro_url +
+                                     '"> &#160;</a>',
                                 parse_mode=ParseMode.HTML,
                                 reply_markup=keyboard)
         if type_product == 'w':
@@ -446,8 +456,9 @@ def redis_register_user(bot, update):
     key = 'user'
     server_r.set(key, update.message.chat_id)
     logging.info('registered user with ID= ' + chat_id)
-    keyboard_main = ReplyKeyboardMarkup([[KeyboardButton(text='درباره ما'),
-                                          KeyboardButton(text='لیست محصولات')]],
+    keyboard_main = ReplyKeyboardMarkup([
+        [KeyboardButton(text='درباره ما'),
+         KeyboardButton(text='لیست محصولات')]],
                                         resize_keyboard=True)
     bot.sendMessage(update.message.chat_id,
                     text="سلام {} . به فروشگاه ما خوش آمدید."
@@ -464,4 +475,3 @@ updater.dispatcher.add_handler(CallbackQueryHandler(inlinekeyboard_b))
 updater.dispatcher.add_handler(MessageHandler(Filters.text, main_menu))
 updater.start_polling()
 updater.idle()
-
