@@ -164,17 +164,17 @@ def info(bot, update):
         text = "No Item found (or wrong item id was sent)"
     else:
         photo_id = galleryItam['id']
-        title = galleryItam['title']
 
-        # The following information is for presentation. Later, all of them
-        # must be fetched from db
         text = """*{}*
-_By: Mostafa Ahangarha_
+_By: {}_
 
-*Size:* 100x70 cm
-*On:* Sep 15, 2017
+*Size:* {} cm
 
-*Price:* $ 30""".format(title)
+*Price:* {} IRR""".format(galleryItam['title'],
+                          galleryItam['by'],
+                          galleryItam['size'],
+                          galleryItam['price'],
+                          )
         keyboardBtn.append(
             [
                 (
