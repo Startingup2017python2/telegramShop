@@ -18,13 +18,16 @@ logging.basicConfig(format='%(asctime)s -'
                     level=logging.INFO)
 server_r = redis.Redis()
 isadmin = 0
-keyboard_main2 = ReplyKeyboardMarkup([
-        [KeyboardButton(text=u'\U00002795' + 'افزودن محصول'),
-         KeyboardButton(text=u'\U0000274E' + 'حذف محصول'),
-         KeyboardButton(text=u'\U0001F4DD' + 'تغییر محصول'),
-         KeyboardButton(text=u'\U000025C0' + 'برگشت'),
-         ]],
-        resize_keyboard=True)
+keyboard_main2 = ReplyKeyboardMarkup(
+    [
+        [
+            KeyboardButton(text=u'\U00002795' + 'افزودن محصول'),
+            KeyboardButton(text=u'\U0000274E' + 'حذف محصول'),
+            KeyboardButton(text=u'\U0001F4DD' + 'تغییر محصول'),
+            KeyboardButton(text=u'\U000025C0' + 'برگشت'),
+        ]
+    ],
+    resize_keyboard=True)
 # data
 
 
@@ -390,12 +393,10 @@ def inlinekeyboard_b(bot, update):
                                              )
                     ),
                     (
-                                              InlineKeyboardButton(
-                                                  text='افزودن به لیست خردید' +
-                                                       u'\U00002714',
-                                                  callback_data="buy_c_" +
-                                                                str(indp)
-                                                                   )
+                        InlineKeyboardButton(text='افزودن به لیست خردید' +
+                                                  u'\U00002714',
+                                             callback_data="buy_c_" +
+                                                           str(indp))
                     )
                 ]
             ]
