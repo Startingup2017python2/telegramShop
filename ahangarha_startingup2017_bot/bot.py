@@ -30,16 +30,23 @@ main_keyboard = ReplyKeyboardMarkup(
 )
 
 
+def is_admin(user_id):
+    if user_id == getEnvVar('ADMIN_ID'):
+        return True
+    else:
+        return False
+
+
 # Reading token from external file
-def getToken():
+def getEnvVar(varName):
     import os
     from os.path import join, dirname
     from dotenv import load_dotenv
     dotenv_path = join(dirname(__file__), '.env')
     load_dotenv(dotenv_path)
 
-    token = os.environ.get("TOKEN")
-    return(token)
+    result = os.environ.get(varName)
+    return(result)
 
 
 def start(bot, update):
@@ -215,7 +222,7 @@ def callbackQueryManager(bot, update):
 
 # ///////////////////////////////////////////////
 
-updater = Updater(getToken())
+updater = Updater(getEnvVar('TOKEN'))
 dispatcher = updater.dispatcher
 
 dispatcher.add_handler(CommandHandler('start', start))
