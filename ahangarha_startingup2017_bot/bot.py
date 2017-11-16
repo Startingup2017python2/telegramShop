@@ -215,7 +215,40 @@ def uploadPhoto(bot, update):
     bot.send_message(
         chat_id=update.message.chat_id,
         text=text,
+        parse_mode='Markdown',
     )
+    # Send a post to registered users and norify them about the new product
+    notifyUsers(bot, update, product_id)
+
+
+def notifyUsers(bot, update, product_id):
+    photo = db.getGalleryItem(product_id)['file_id']
+    # get all users id from db
+    user_ids = users.getAllUsersId()
+    #   notify each user
+    for user_id in user_ids:
+        logging.info("Sending notification to {}".format(user_id))
+
+        # Avoid sending notification to the admin
+        if is_admin(user_id):
+            continue
+        bot.send_message(
+            chat_id=user_id,
+            text="There is a new item in our Store:",
+        )
+
+        bot.send_photo(
+            chat_id=user_id,
+            photo=photo
+        )
+
+        text = productDetails(product_id)
+
+        bot.send_message(
+            chat_id=user_id,
+            text=text,
+            parse_mode='Markdown',
+        )
 
 
 def callbackQueryManager(bot, update):
@@ -228,6 +261,9 @@ def callbackQueryManager(bot, update):
     elif job == 'buy':
         buy(bot, update)
 
+
+def temp(bot, update):
+    print(update)
 
 # ///////////////////////////////////////////////
 
@@ -253,6 +289,7 @@ dispatcher = updater.dispatcher
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('about', about))
 dispatcher.add_handler(CommandHandler('gallery', gallery))
+dispatcher.add_handler(CommandHandler('temp', temp))
 
 
 updater.dispatcher.add_handler(CallbackQueryHandler(callbackQueryManager))
