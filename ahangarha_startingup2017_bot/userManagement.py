@@ -5,8 +5,9 @@
 # Description: This is homework for StartingUp2017 course
 # This file consists of methods dealing with users
 
+import logging
 import redis
-r = redis.StrictRedis()  # Connect with default setting (localhost:3679)
+r = redis.StrictRedis(decode_responses=True)
 
 
 def registerUser(user_id=0):
@@ -15,3 +16,11 @@ def registerUser(user_id=0):
     # Now let's assume it is provided properly
     # Saving user_id as (key='u:user_id', value='1')
     r.set('u:{}'.format(user_id), '1')
+    logging.info('User {} registered'.format(user_id))
+
+
+def getAllUsersId():
+    all_users = r.keys('u:*')
+    for i in range(0, len(all_users)):
+        all_users[i] = all_users[i].split(':')[1]
+    return all_users
