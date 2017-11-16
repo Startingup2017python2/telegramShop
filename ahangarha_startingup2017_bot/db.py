@@ -9,7 +9,7 @@ This file is meant to handle all database related jobs.
 """
 import redis
 
-r = redis.StrictRedis()
+r = redis.StrictRedis(decode_responses=True)
 
 
 def getGalleryItems(start=0, count=5):
@@ -18,8 +18,9 @@ def getGalleryItems(start=0, count=5):
     # Getting all the product ids
     product_id = []
     for item in r.keys('p:*'):
-        p_id = item.decode('utf-8').split(':')[1]
-        product_id.append(p_id)
+        p_id = item.split(':')[1]
+        if p_id.isnumeric():  # to evoid getting p:last_id
+            product_id.append(p_id)
 
     product_id.sort()  # sort id
     for i in product_id:
@@ -27,8 +28,8 @@ def getGalleryItems(start=0, count=5):
         item['id'] = i
         name = 'p:{}'.format(i)
         for key, value in r.hgetall(name).items():
-            key = key.decode('utf-8')
-            value = value.decode('utf-8')
+            key = key
+            value = value
             item[key] = value
         items.append(item)
 
@@ -40,11 +41,22 @@ def getGalleryItem(item_id=None):
     item['id'] = item_id
     name = 'p:{}'.format(item_id)
     for key, value in r.hgetall(name).items():
-        key = key.decode('utf-8')
-        value = value.decode('utf-8')
+        key = key
+        value = value
         item[key] = value
 
     return item
+
+
+def add_new_item(keyValues):
+    p_id = int(r.get('p:last_id')) + 1
+    for key, value in keyValues.items():
+        r.hset('p:{}'.format(p_id),
+               key,
+               value
+               )
+        r.set('p:last_id', p_id)
+    return p_id
 
 
 def addDefaultData():
@@ -87,6 +99,7 @@ def addDefaultData():
         item.pop('id')  # to get other attributes than id
         for (key, value) in item.items():
             r.hset(name, key, value)
+    r.set('p:last_id', 5)
 
 
 if __name__ == '__main__':

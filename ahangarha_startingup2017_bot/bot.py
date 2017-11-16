@@ -8,26 +8,11 @@ from telegram.ext import Updater, Filters
 from telegram.ext import CommandHandler, MessageHandler, CallbackQueryHandler
 from telegram import ReplyKeyboardMarkup, KeyboardButton
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-
+import db
 import logging
 
 import userManagement as users
 import orderManagement as orders
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO,
-)
-
-main_keyboard = ReplyKeyboardMarkup(
-    [
-        [
-            KeyboardButton(text='Gallery'),
-            KeyboardButton(text='About'),
-        ],
-    ],
-    resize_keyboard=True
-)
 
 
 def is_admin(user_id):
@@ -90,27 +75,13 @@ This bot is (being) made by Mostafa Ahangarha as the project for
 
 
 def gallery(bot, update):
-    import db
     galleryItams = db.getGalleryItems()
 
     for i in galleryItams:
-        photo_id = i['id']
-        title = i['title']
-        url = i['url']
-        filename = 'photos/' + i['filename']
-
-        if url is None:
-            # If there is no URL, upload the photo
-            logging.info('Uploading {}'.format(filename))
-            with open(filename, "rb") as file:
-                photo = file
-        else:
-            logging.info('Sending {} from url'.format(filename))
-            photo = url
 
         bot.send_photo(
             chat_id=update.message.chat_id,
-            photo=photo,
+            photo=i['file_id'],
         )
 
         keyboard = InlineKeyboardMarkup(
@@ -119,7 +90,7 @@ def gallery(bot, update):
                     (
                         InlineKeyboardButton(
                             text='More...',
-                            callback_data="info_{}".format(photo_id)
+                            callback_data="info_{}".format(i['id'])
                         )
                     )
                 ]
@@ -127,7 +98,7 @@ def gallery(bot, update):
         )
 
         bot.send_message(chat_id=update.message.chat_id,
-                         text=title,
+                         text=i['title'],
                          parse_mode='Markdown',
                          reply_markup=keyboard)
 
@@ -159,39 +130,21 @@ def info(bot, update):
     query = update.callback_query
     data = query['data']  # Format: job_id
 
-    item_id = data.split('_')[1]
+    product_id = data.split('_')[1]
 
-    import db
-    galleryItam = db.getGalleryItem(item_id)
+    text = productDetails(product_id)
 
     keyboardBtn = []
-
-    if galleryItam is None:
-        logging.info('No item found in database with id={}'.format(item_id))
-        text = "No Item found (or wrong item id was sent)"
-    else:
-        photo_id = galleryItam['id']
-
-        text = """*{}*
-_By: {}_
-
-*Size:* {} cm
-
-*Price:* {} IRR""".format(galleryItam['title'],
-                          galleryItam['by'],
-                          galleryItam['size'],
-                          galleryItam['price'],
-                          )
-        keyboardBtn.append(
-            [
-                (
-                    InlineKeyboardButton(
-                        text='Buy',
-                        callback_data="buy_{}".format(photo_id),
-                    )
-                ),
-            ]
-        )
+    keyboardBtn.append(
+        [
+            (
+                InlineKeyboardButton(
+                    text='Buy',
+                    callback_data="buy_{}".format(product_id),
+                )
+            ),
+        ]
+    )
 
     keyboard = InlineKeyboardMarkup(keyboardBtn)
 
@@ -202,11 +155,67 @@ _By: {}_
                           reply_markup=keyboard)
 
 
+def productDetails(product_id):
+    product = db.getGalleryItem(product_id)
+    product.pop('file_id')
+    product.pop('id')
+    text = ''
+    if product['title'] is not None:
+        text += "*{}*\n".format(product['title'])
+        product.pop('title')
+    if product['price'] is not None:
+        text += "Price: {}\n".format(product['price'])
+        product.pop('price')
+    text += '_' * 20 + "\n"
+    for key, value in product.items():
+        text += "{}: {}\n".format(key.capitalize(), value)
+
+    return text
+
+
 def msgRedirect(bot, update):
     if update.message.text == 'About':
         about(bot, update)
     elif update.message.text == 'Gallery':
         gallery(bot, update)
+
+
+def uploadPhoto(bot, update):
+    keyValues = {}  # dictionary containing key-values to be saved in db
+    # There are three versions of the uploaded photos. photo[0] is the lightest
+    # and the photo [2] is the largest in terms of size. Since we don't need
+    # large files we will only save the light version. Otherwise we need to
+    # save all the files_ids in an array
+    file_id = update.message.photo[0].file_id
+    caption = update.message.caption
+    # caption structure is as key1:val1\nkey2:val2\n...
+    keyValues['file_id'] = file_id
+
+    rows = caption.split('\n')
+    for row in rows:
+        key, value = row.split(':', 1)
+        key = key.strip().lower()
+        value = value.strip()
+        keyValues[key] = value
+
+    # TODO: Make sure the necessary data (title and price) are provided
+    product_id = db.add_new_item(keyValues)
+
+    if product_id is False:
+        text = "Not successfull! :("
+    else:
+        text = "Added successfully :)\n\nInto:\n"
+        text += productDetails(product_id)
+
+    bot.send_photo(
+        chat_id=update.message.chat_id,
+        photo=db.getGalleryItem(product_id)['file_id']
+    )
+
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text=text,
+    )
 
 
 def callbackQueryManager(bot, update):
@@ -222,6 +231,22 @@ def callbackQueryManager(bot, update):
 
 # ///////////////////////////////////////////////
 
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO,
+)
+
+main_keyboard = ReplyKeyboardMarkup(
+    [
+        [
+            KeyboardButton(text='Gallery'),
+            KeyboardButton(text='About'),
+        ],
+    ],
+    resize_keyboard=True
+)
+
 updater = Updater(getEnvVar('TOKEN'))
 dispatcher = updater.dispatcher
 
@@ -229,9 +254,11 @@ dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('about', about))
 dispatcher.add_handler(CommandHandler('gallery', gallery))
 
+
 updater.dispatcher.add_handler(CallbackQueryHandler(callbackQueryManager))
 
 dispatcher.add_handler(MessageHandler(Filters.text, msgRedirect))
+dispatcher.add_handler(MessageHandler(Filters.photo, uploadPhoto))
 updater.start_polling()
 
 print("The bot is running...")
