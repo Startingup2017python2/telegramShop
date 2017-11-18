@@ -22,37 +22,35 @@ __Bot address:__ http://t.me/gity0bot
 
 __Description:__ A bot for selling perfume products that has below facilities:
 
-#### Register users without their intervention
-#### add user ID to .env file as admin
-#### add product by admin
-#### display products list for users 
-#### buy product by users
-
-### about me
-
-https://github.com/gitygity/telegramShop/blob/modifyreadme/gity_startingup2017_bot/images/about.jpg
+- Register users without their intervention (redis used for storing data.)
+- add user ID to .env file as admin
+- add product by admin (redis used for storing data.)
+- display products list for users 
+- buy product by users
 
 
--redis used for storing data.below pictures show facilities that discribed:
+
+__bot images:__ below pictures show facilities that discribed:
 
 	#register users after typing '/start' command
-
-
+![login and register user](https://github.com/gitygity/telegramShop/blob/modifyreadme/gity_startingup2017_bot/images/start.jpg "login and register user")
 
 	#login admin with '/admin' command
-
-
+![login admin](https://github.com/gitygity/telegramShop/blob/modifyreadme/gity_startingup2017_bot/images/admin.jpg "login admin")
 
 	#add product by admin
-
-
+![add product](https://github.com/gitygity/telegramShop/blob/modifyreadme/gity_startingup2017_bot/images/addproduct.jpg "add product")
 
 	#display products list
-
+![list product](https://github.com/gitygity/telegramShop/blob/modifyreadme/gity_startingup2017_bot/images/list.jpg "list product")
 
 
 	#notify to users in the end of adding product
-	
+![notify](https://github.com/gitygity/telegramShop/blob/modifyreadme/gity_startingup2017_bot/images/notify.jpg "notify")
+  
+
+	#about 
+![about](https://github.com/gitygity/telegramShop/blob/modifyreadme/gity_startingup2017_bot/images/about.jpg "about bot")
 	
 
 
