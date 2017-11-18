@@ -19,8 +19,6 @@ logging.basicConfig(format='%(asctime)s -'
                     level=logging.INFO)
 server_r = redis.Redis(decode_responses=True)
 
-
-print(server_r.get('idp'))
 if not server_r.exists('idp'):
     server_r.set('idp', 0)
 idp = 0
@@ -352,11 +350,6 @@ def url_p(bot, update):
                              pro_url + '"> &#160;</a>.',
                         parse_mode=ParseMode.HTML,
                         reply_markup=keyboard)
-
-    print(server_r.hget('p' + str(idp), 'name'))
-    print(server_r.hget('p' + str(idp), 'price'))
-    print(server_r.hget('p' + str(idp), 'discribe'))
-    print(server_r.hget('p' + str(idp), 'url'))
 
     return ConversationHandler.END
 
