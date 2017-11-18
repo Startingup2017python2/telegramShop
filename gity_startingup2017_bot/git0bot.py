@@ -19,8 +19,6 @@ logging.basicConfig(format='%(asctime)s -'
                     level=logging.INFO)
 server_r = redis.Redis(decode_responses=True)
 
-# server_r.delete('order6')
-
 
 print(server_r.get('idp'))
 if not server_r.exists('idp'):
@@ -123,24 +121,6 @@ def products(bot, update):
                              pro_url + '"> &#160;</a>.',
                         parse_mode=ParseMode.HTML,
                         reply_markup=keyboard)
-
-
-def redis_register_user(bot, update):
-    chat_id = str(update.message.chat_id)
-    key = 'user'
-    server_r.set(key, update.message.chat_id)
-    logging.info('registered user with ID= ' + chat_id)
-    keyboard_main = ReplyKeyboardMarkup([
-        [KeyboardButton(text='درباره ما'),
-         KeyboardButton(text='لیست محصولات')]],
-        resize_keyboard=True)
-    bot.sendMessage(update.message.chat_id, text="سلام {}."
-                                                 "به فروشگاه ما خوش آمدید."
-                                                 "شما می توانید از دکمه لیست "
-                                                 "محصولات به لیست ادکلن های "
-                                                 "این فروشگاه دسترسی یابید."
-                    .format(update.message.chat.first_name),
-                    reply_markup=keyboard_main)
 
 
 def login_admin(bot, update):
@@ -256,6 +236,18 @@ def register_user(bot, update):
     chat_id = str(update.message.chat_id)
     key = 'user:'
     server_r.set(key + chat_id, '1')
+    logging.info('registered user with ID= ' + chat_id)
+    keyboard_main = ReplyKeyboardMarkup([
+        [KeyboardButton(text='درباره ما'),
+         KeyboardButton(text='لیست محصولات')]],
+        resize_keyboard=True)
+
+    bot.sendMessage(update.message.chat_id,
+                    text="سلام {} . به فروشگاه ما خوش آمدید."
+                         " شما می توانید از دکمه لیست محصولات "
+                         "به لیست ادکلن های این فروشگاه دسترسی یابید. "
+                    .format(update.message.chat.first_name),
+                    reply_markup=keyboard_main)
     logging.info('registered user with ID= ' + chat_id)
 
 
