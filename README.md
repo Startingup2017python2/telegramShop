@@ -20,4 +20,42 @@ __Description:__ A bot for selling Photos
 
 __Bot address:__ http://t.me/gity0bot
 
-__Description:__ A bot for selling perfume products
+__Description:__ A bot for selling perfume products that has below facilities:
+
+#### Register users without their intervention
+#### add user ID to .env file as admin
+#### add product by admin
+#### display products list for users 
+#### buy product by users
+	
+-redis used for storing data.below pictures show facilities that discribed:
+
+	#register users after typing '/start' command
+
+
+
+	#login admin with '/admin' command
+
+
+
+	#add product by admin
+
+
+
+	#display products list
+
+
+
+	#notify to users in the end of adding product
+	
+	
+
+
+
+   
+
+
+
+
+
+
