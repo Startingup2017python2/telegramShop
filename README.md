@@ -27,7 +27,12 @@ __Description:__ A bot for selling perfume products that has below facilities:
 #### add product by admin
 #### display products list for users 
 #### buy product by users
-	
+
+### about me
+
+https://github.com/gitygity/telegramShop/blob/modifyreadme/gity_startingup2017_bot/images/about.jpg
+
+
 -redis used for storing data.below pictures show facilities that discribed:
 
 	#register users after typing '/start' command
