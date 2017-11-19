@@ -7,12 +7,13 @@ It is up to the developer to choose the products.
 
 ### Ahangarha Startingup2017
 
-__logo:__ ![Ahangarha StartingUp2017 bot logo](ahangarha_bot_logo.png "Ahangarha StartingUp2017 bot logo")
+__Description:__ A bot for selling Photos
 
 __Bot address:__ http://t.me/ahangarha_startingup2017_bot
 
-__Description:__ A bot for selling Photos
+**ScreenShots:**
 
+[![Screenshot](ahangarha_startingup2017_bot/bot-screenshot-20171119-th.png)](https://raw.githubusercontent.com/ahangarha/telegramShop/add-items-by-admin/ahangarha_startingup2017_bot/bot-screenshot-20171119.pn://raw.githubusercontent.com/ahangarha/telegramShop/add-items-by-admin/ahangarha_startingup2017_bot/bot-screenshot-20171119.png)
 
 
 ### gitys bot
